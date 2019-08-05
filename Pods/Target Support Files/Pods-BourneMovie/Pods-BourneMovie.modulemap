@@ -1,0 +1,6 @@
+framework module Pods_BourneMovie {
+  umbrella header "Pods-BourneMovie-umbrella.h"
+
+  export *
+  module * { export * }
+}
