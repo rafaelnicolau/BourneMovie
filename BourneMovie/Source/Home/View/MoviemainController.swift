@@ -13,19 +13,15 @@ class MoviemainController: UIViewController {
     @IBOutlet weak var indicator: UIActivityIndicatorView!
     @IBOutlet var MainView: UIView!
     @IBOutlet weak var SecondView: UIView!
-    @IBOutlet weak var ivImage: UIImageView!
     @IBOutlet weak var tbMovie: UITableView!
-    @IBOutlet weak var tfLocalizer: UITextField!
-    @IBOutlet weak var btSearch: UIButton!
+   
     
-    
-    private var nameFilme: String?
     private var idMovie: Int?
     private var indexpath: IndexPath?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        changeColorSearchButton()
+        setupNavBar()
         self.indicator.isHidden = false
         self.tbMovie.isHidden = true
         loadGenres()
@@ -34,15 +30,22 @@ class MoviemainController: UIViewController {
         }
     
     override func viewWillAppear(_ animated: Bool) {
-        loadMovie()
         self.tbMovie.reloadData()
     }
-
-    func changeColorSearchButton(){
-        let searchImage = UIImage(named: "loupe")?.withRenderingMode(.alwaysTemplate)
-        self.btSearch.setImage(searchImage, for: .normal)
-        self.btSearch.tintColor = UIColor.orange
+    
+    func setupNavBar() {
+        let nav = navigationController
+        nav?.navigationBar.tintColor = .orange
+        nav?.navigationBar.tintColor = UIColor.orange
+        nav?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.orange]
+        nav?.navigationBar.prefersLargeTitles = true
+        
+        let searchController = UISearchController(searchResultsController: nil)
+        navigationItem.searchController = searchController
+      
     }
+    
+   
     
     func loadMovie() {
         MovieAPI.loadMovies(onComplete: { [weak self] (movie) in
@@ -84,24 +87,24 @@ class MoviemainController: UIViewController {
         
     }
     
-    @IBAction func btSearch(_ sender: Any) {
-        guard let search = tfLocalizer.text else { return }
-        if Service.shared.result.contains(where: { $0.title == search}) {
-            for i in 0..<Service.shared.result.count {
-                if Service.shared.result[i].title == search {
-                    Service.shared.result = [Service.shared.result[i]]
-                    self.tbMovie.reloadData()
-                    self.tfLocalizer.text = ""
-                    break
-                }
-            }
-        }else {
-            let vc = CustomPopupViewController()
-            vc.modalTransitionStyle = .crossDissolve
-            vc.modalPresentationStyle = .overCurrentContext
-            self.present(vc, animated: true, completion: nil)
-        }
-    }
+//    @IBAction func btSearch(_ sender: Any) {
+//        guard let search = tfLocalizer.text else { return }
+//        if Service.shared.result.contains(where: { $0.title == search}) {
+//            for i in 0..<Service.shared.result.count {
+//                if Service.shared.result[i].title == search {
+//                    Service.shared.result = [Service.shared.result[i]]
+//                    self.tbMovie.reloadData()
+//                    self.tfLocalizer.text = ""
+//                    break
+//                }
+//            }
+//        }else {
+//            let vc = CustomPopupViewController()
+//            vc.modalTransitionStyle = .crossDissolve
+//            vc.modalPresentationStyle = .overCurrentContext
+//            self.present(vc, animated: true, completion: nil)
+//        }
+//    }
     
     
     

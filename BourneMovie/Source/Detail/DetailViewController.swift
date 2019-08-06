@@ -11,9 +11,8 @@ import UIKit
 class DetailViewController: UIViewController {
 
     
-    @IBOutlet weak var btBack: UIButton!
     @IBOutlet weak var ivImage: UIImageView!
-    @IBOutlet weak var lbTitle: UILabel!
+    
     @IBOutlet weak var lbDescription: UILabel!
     @IBOutlet weak var lbPopularity: UILabel!
     @IBOutlet weak var lbCategory: UILabel!
@@ -25,18 +24,22 @@ class DetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        changeColorBackButton()
         parseDetail()
+        formatBar()
         formatDetail()
         
 
         // Do any additional setup after loading the view.
     }
     
-    func changeColorBackButton(){
-        let templateImage = UIImage(named: "back")?.withRenderingMode(.alwaysTemplate)
-        self.btBack.setImage(templateImage, for: .normal)
-        self.btBack.tintColor = UIColor.red
+   
+    
+    func formatBar(){
+        let nav = self.navigationController?.navigationBar
+        self.title = detail.title
+        navigationItem.largeTitleDisplayMode = .never
+        nav?.tintColor = UIColor.orange
+        nav?.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.orange]
     }
     
     func parseDetail(){
@@ -56,7 +59,6 @@ class DetailViewController: UIViewController {
     
     func formatDetail(){
         guard let genre = detail.genre?.first else { return }
-        self.lbTitle.text = detail.title
         self.lbDescription.text = detail.information
         self.lbPopularity.text = "\(String(describing: detail.popularity))"
         localizeGenres(genre)
@@ -81,10 +83,6 @@ class DetailViewController: UIViewController {
         
     }
 
-    @IBAction func btBack(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
-    }
-   
     @IBAction func btFavorite(_ sender: Any) {
     }
     
