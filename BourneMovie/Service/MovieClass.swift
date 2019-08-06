@@ -32,3 +32,7 @@ class MovieResult: Codable {
     var overview: String?
     var release_date: String?
 }
+
+class MovieGenres: Codable{
+    var genres: [Genres]?
+}

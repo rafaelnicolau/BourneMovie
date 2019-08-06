@@ -17,14 +17,24 @@ class Service {
     private init () {}
     
     var serviceRequest: MovieInfo?
-    var result: [MovieResult]?
-    var genres: [Genres]?
+    var requestGenres: MovieGenres?
+    var result = [MovieResult]()
+    
     var detail: Detail?
     
     
     class func requestImage(image: String) -> String {
         let basePath = "https://image.tmdb.org/t/p/w500/"
         return basePath + image
-        
-    }
+        }
+    
+//    func requestGenre(_ id: Int) -> String {
+//
+//        for i in 0..<genres.genres?.count {
+//            if genres[i] == id {
+//                genero = genres[i].name!
+//            }
+//        }
+//        return genero
+//    }
 }

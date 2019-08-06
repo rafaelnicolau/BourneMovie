@@ -28,8 +28,9 @@ class MoviemainController: UIViewController {
         changeColorSearchButton()
         self.indicator.isHidden = false
         self.tbMovie.isHidden = true
-        loadMovie()
         loadGenres()
+        loadMovie()
+        
         }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -46,7 +47,8 @@ class MoviemainController: UIViewController {
     func loadMovie() {
         MovieAPI.loadMovies(onComplete: { [weak self] (movie) in
             Service.shared.serviceRequest = movie
-            Service.shared.result = movie.results
+            guard let result = movie.results else { return }
+            Service.shared.result = result
             DispatchQueue.main.async {
                 self?.tbMovie.reloadData()
                 self?.tbMovie.isHidden = false
@@ -61,7 +63,7 @@ class MoviemainController: UIViewController {
     
     func loadGenres() {
         MovieAPI.loadGenre(onComplete: {(genres) in
-            Service.shared.genres = [genres]
+            Service.shared.requestGenres = genres
         }) { (error) in
             print(error)
         }
@@ -84,11 +86,10 @@ class MoviemainController: UIViewController {
     
     @IBAction func btSearch(_ sender: Any) {
         guard let search = tfLocalizer.text else { return }
-        guard let result = Service.shared.result else { return }
-        if result.contains(where: { $0.title == search}) {
-            for i in 0..<result.count {
-                if result[i].title == search {
-                    Service.shared.result = [result[i]]
+        if Service.shared.result.contains(where: { $0.title == search}) {
+            for i in 0..<Service.shared.result.count {
+                if Service.shared.result[i].title == search {
+                    Service.shared.result = [Service.shared.result[i]]
                     self.tbMovie.reloadData()
                     self.tfLocalizer.text = ""
                     break
@@ -118,7 +119,7 @@ extension MoviemainController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
        
-        return Service.shared.result?.count ?? 0
+        return Service.shared.result.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -126,12 +127,11 @@ extension MoviemainController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let result = Service.shared.result?[indexPath.row] else { return UITableViewCell() }
         let cell = self.tbMovie.dequeueReusableCell(withIdentifier: "cellMovie") as! MoviemainTableViewCell
-        cell.formatCell(result)
+        cell.formatCell(Service.shared.result[indexPath.row])
         cell.delegate = self
-        cell.result = result
-        cell.id = result.id
+        cell.result = Service.shared.result[indexPath.row]
+        cell.id = Service.shared.result[indexPath.row].id
         cell.indexpath = indexPath
         return cell
     }

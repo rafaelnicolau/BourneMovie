@@ -34,8 +34,11 @@ class MoviemainTableViewCell: UITableViewCell {
     }
 
     func formatCell(_ movie: MovieResult) {
+        if let vote = movie.vote_average {
+            self.lbRate.text = String(vote)
+        }
         self.lbNome.text = movie.title
-//        self.lbRate.text = movie.
+        self.btDetail.layer.cornerRadius = 10
         self.lbDate.text = movie.release_date
         if let url = URL(string: Service.requestImage(image: movie.poster_path ?? "")) {
             ivImage.kf.indicatorType = .activity

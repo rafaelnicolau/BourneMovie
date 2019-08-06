@@ -72,7 +72,7 @@ class MovieAPI {
     }
     
     
-    class func loadGenre(onComplete: @escaping (Genres) -> Void, onError: @escaping (GenresError) -> Void) {
+    class func loadGenre(onComplete: @escaping (MovieGenres) -> Void, onError: @escaping (GenresError) -> Void) {
         guard let url = URL(string: genresPath) else {
             onError(.url)
             return
@@ -86,7 +86,7 @@ class MovieAPI {
                 if response.statusCode == 200 {
                     guard let data = data else { return }
                     do{
-                        let genres = try JSONDecoder().decode(Genres.self, from: data)
+                        let genres = try JSONDecoder().decode(MovieGenres.self, from: data)
                         onComplete(genres)
                     } catch {
                         print(error.localizedDescription)

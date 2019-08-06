@@ -10,6 +10,6 @@ import Foundation
 
 class Genres: Codable {
     
-    var id: Int?
-    var name: String?
+    let id: Int?
+    let name: String?
 }
