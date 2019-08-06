@@ -14,10 +14,12 @@ class MoviemainController: UIViewController {
     @IBOutlet var MainView: UIView!
     @IBOutlet weak var SecondView: UIView!
     @IBOutlet weak var tbMovie: UITableView!
-   
+    
     
     private var idMovie: Int?
     private var indexpath: IndexPath?
+    let searchController = UISearchController(searchResultsController: nil)
+    var filterMovies = [MovieResult]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,12 +41,19 @@ class MoviemainController: UIViewController {
         nav?.navigationBar.tintColor = UIColor.orange
         nav?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.orange]
         nav?.navigationBar.prefersLargeTitles = true
-        
-        let searchController = UISearchController(searchResultsController: nil)
+        self.searchController.searchResultsUpdater = self
+        self.searchController.dimsBackgroundDuringPresentation = false
+        definesPresentationContext = true
+        self.searchController.searchBar.delegate = self
         navigationItem.searchController = searchController
-      
     }
     
+    func filterContentForSearchText(searchText: String) {
+        filterMovies = Service.shared.result.filter{ movie in
+            return (movie.title?.lowercased().contains(searchText.lowercased()))!
+            }
+            self.tbMovie.reloadData()
+    }
    
     
     func loadMovie() {
@@ -122,6 +131,10 @@ extension MoviemainController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
        
+        if searchController.isActive && searchController.searchBar.text != ""{
+        return self.filterMovies.count
+        }
+        
         return Service.shared.result.count
     }
     
@@ -130,11 +143,18 @@ extension MoviemainController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let movie: MovieResult
+        if searchController.isActive && searchController.searchBar.text != ""{
+            movie = self.filterMovies[indexPath.row]
+        }else {
+            movie = Service.shared.result[indexPath.row]
+        }
+        
         let cell = self.tbMovie.dequeueReusableCell(withIdentifier: "cellMovie") as! MoviemainTableViewCell
-        cell.formatCell(Service.shared.result[indexPath.row])
+        cell.formatCell(movie)
         cell.delegate = self
-        cell.result = Service.shared.result[indexPath.row]
-        cell.id = Service.shared.result[indexPath.row].id
+        cell.result = movie
+        cell.id = movie.id
         cell.indexpath = indexPath
         return cell
     }
@@ -149,6 +169,23 @@ extension MoviemainController: MoviemainDelegate {
     
     func tableviewReload() {
         self.tbMovie.reloadData()
+    }
+    
+    
+}
+
+extension MoviemainController: UISearchBarDelegate {
+
+
+
+//    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+////        searchBar.text
+//    }
+}
+
+extension MoviemainController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        filterContentForSearchText(searchText: searchController.searchBar.text!)
     }
     
     
