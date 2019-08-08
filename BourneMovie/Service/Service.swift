@@ -28,13 +28,5 @@ class Service {
         return basePath + image
         }
     
-//    func requestGenre(_ id: Int) -> String {
-//
-//        for i in 0..<genres.genres?.count {
-//            if genres[i] == id {
-//                genero = genres[i].name!
-//            }
-//        }
-//        return genero
-//    }
+
 }

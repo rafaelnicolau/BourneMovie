@@ -20,6 +20,9 @@ class MoviemainController: UIViewController {
     private var indexpath: IndexPath?
     let searchController = UISearchController(searchResultsController: nil)
     var filterMovies = [MovieResult]()
+    private var currentPage: Int?
+    private var totalPages: Int?
+    var loadingMovie = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,24 +30,27 @@ class MoviemainController: UIViewController {
         self.indicator.isHidden = false
         self.tbMovie.isHidden = true
         loadGenres()
-        loadMovie()
-        
+        loadFirstList()
         }
     
     override func viewWillAppear(_ animated: Bool) {
+        setupNavBar()
         self.tbMovie.reloadData()
     }
     
     func setupNavBar() {
         let nav = navigationController
         nav?.navigationBar.tintColor = .orange
-        nav?.navigationBar.tintColor = UIColor.orange
+        nav?.navigationBar.tintColor = UIColor.white
         nav?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.orange]
         nav?.navigationBar.prefersLargeTitles = true
         self.searchController.searchResultsUpdater = self
         self.searchController.dimsBackgroundDuringPresentation = false
         definesPresentationContext = true
         self.searchController.searchBar.delegate = self
+        self.searchController.searchBar.value(forKey: "searchField") as! UITextField
+        self.searchController.searchBar.placeholder = "Search Title"
+        self.searchController.searchBar.tintColor = .white
         navigationItem.searchController = searchController
     }
     
@@ -56,15 +62,18 @@ class MoviemainController: UIViewController {
     }
    
     
-    func loadMovie() {
-        MovieAPI.loadMovies(onComplete: { [weak self] (movie) in
+    func loadFirstList() {
+        self.loadingMovie = true
+        MovieAPI.loadMovies(numberPage: currentPage, onComplete: { [weak self] (movie) in
             Service.shared.serviceRequest = movie
-            guard let result = movie.results else { return }
-            Service.shared.result = result
+            self?.currentPage = Service.shared.serviceRequest?.page
+            self?.totalPages = Service.shared.serviceRequest?.total_pages
+            guard let result = movie?.results else { return }
+            Service.shared.result += result
             DispatchQueue.main.async {
                 self?.tbMovie.reloadData()
                 self?.tbMovie.isHidden = false
-                
+                self?.loadingMovie = false
             }
         }) { (error) in
             self.tbMovie.isHidden = true
@@ -72,6 +81,7 @@ class MoviemainController: UIViewController {
             print(error)
         }
     }
+    
     
     func loadGenres() {
         MovieAPI.loadGenre(onComplete: {(genres) in
@@ -87,35 +97,7 @@ class MoviemainController: UIViewController {
         vc.id = self.idMovie
         vc.indepath = self.indexpath
     }
-    
-    func sortedImage(){
-        
-    }
-    
-    func search(_ title: String) {
-        
-    }
-    
-//    @IBAction func btSearch(_ sender: Any) {
-//        guard let search = tfLocalizer.text else { return }
-//        if Service.shared.result.contains(where: { $0.title == search}) {
-//            for i in 0..<Service.shared.result.count {
-//                if Service.shared.result[i].title == search {
-//                    Service.shared.result = [Service.shared.result[i]]
-//                    self.tbMovie.reloadData()
-//                    self.tfLocalizer.text = ""
-//                    break
-//                }
-//            }
-//        }else {
-//            let vc = CustomPopupViewController()
-//            vc.modalTransitionStyle = .crossDissolve
-//            vc.modalPresentationStyle = .overCurrentContext
-//            self.present(vc, animated: true, completion: nil)
-//        }
-//    }
-    
-    
+
     
     func alerta(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
@@ -158,6 +140,16 @@ extension MoviemainController: UITableViewDataSource, UITableViewDelegate {
         cell.indexpath = indexPath
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == Service.shared.result.count - 2 && Service.shared.result.count != totalPages && !loadingMovie {
+            if let page = currentPage {
+                self.currentPage = page + 1
+                self.loadFirstList()
+            }
+            
+        }
+    }
 
 }
 
@@ -176,11 +168,6 @@ extension MoviemainController: MoviemainDelegate {
 
 extension MoviemainController: UISearchBarDelegate {
 
-
-
-//    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-////        searchBar.text
-//    }
 }
 
 extension MoviemainController: UISearchResultsUpdating {

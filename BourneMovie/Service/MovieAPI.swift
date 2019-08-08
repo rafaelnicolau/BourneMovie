@@ -29,8 +29,8 @@ enum GenresError{
 
 class MovieAPI {
     
-    private static let basePath = "https://api.themoviedb.org/3/movie/popular?api_key=69d50a611a8bb715594ccee31cb6623f&languege=pt-BR&"
-    private static let genresPath = "https://api.themoviedb.org/3/genre/movie/list?api_key=69d50a611a8bb715594ccee31cb6623f&languege=pt-BR&"
+    private static let basePath = "https://api.themoviedb.org/3/movie/popular?api_key=69d50a611a8bb715594ccee31cb6623f&language=pt-BR&"
+    private static let genresPath = "https://api.themoviedb.org/3/genre/movie/list?api_key=69d50a611a8bb715594ccee31cb6623f&language=pt-BR&"
     private static let configuration: URLSessionConfiguration = {
        let config = URLSessionConfiguration.default
         config.httpAdditionalHeaders = ["Content-Type":"application/json"]
@@ -41,8 +41,8 @@ class MovieAPI {
     private static let session = URLSession(configuration: configuration)
     
     
-    class func loadMovies(onComplete: @escaping (MovieInfo) -> Void, onError: @escaping (MovieError) -> Void) {
-        guard let url = URL(string: basePath) else {
+    class func loadMovies(numberPage: Int? , onComplete: @escaping (MovieInfo?) -> Void, onError: @escaping (MovieError) -> Void) {
+        guard let url = URL(string: (basePath + "page=\(numberPage ?? 1)")) else {
             onError(.url)
             return
         }

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CustomPopupViewController: UIViewController {
+class CustomPopup: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

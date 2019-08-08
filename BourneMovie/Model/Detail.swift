@@ -15,5 +15,6 @@ class Detail {
     var popularity: Double?
     var poster: String?
     var favorite: Bool?
+    var rank: Double?
     var genre: [Int]?
 }

@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		8C19E4488FAB579E3B6D1282 /* Pods_BourneMovie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A954F78C778F032E396E0802 /* Pods_BourneMovie.framework */; };
 		FE04BE9A22F08DF8002A2A05 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE04BE9922F08DF8002A2A05 /* Service.swift */; };
-		FE4AF84222F872A5005B8A9D /* CustomPopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE4AF84022F872A5005B8A9D /* CustomPopupViewController.swift */; };
-		FE4AF84322F872A5005B8A9D /* CustomPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FE4AF84122F872A5005B8A9D /* CustomPopupViewController.xib */; };
+		FE4AF84222F872A5005B8A9D /* CustomPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE4AF84022F872A5005B8A9D /* CustomPopup.swift */; };
+		FE4AF84322F872A5005B8A9D /* CustomPopup.xib in Resources */ = {isa = PBXBuildFile; fileRef = FE4AF84122F872A5005B8A9D /* CustomPopup.xib */; };
 		FE4AF84522F89C59005B8A9D /* Genres.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE4AF84422F89C59005B8A9D /* Genres.swift */; };
 		FE6F72A722B2E10D00A44D4B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE6F72A622B2E10D00A44D4B /* AppDelegate.swift */; };
 		FE6F72A922B2E10D00A44D4B /* MoviemainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE6F72A822B2E10D00A44D4B /* MoviemainController.swift */; };
@@ -30,8 +30,8 @@
 		A954F78C778F032E396E0802 /* Pods_BourneMovie.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BourneMovie.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2FC3BFE6E7B8BFF12E765C6 /* Pods-BourneMovie.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BourneMovie.release.xcconfig"; path = "Target Support Files/Pods-BourneMovie/Pods-BourneMovie.release.xcconfig"; sourceTree = "<group>"; };
 		FE04BE9922F08DF8002A2A05 /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
-		FE4AF84022F872A5005B8A9D /* CustomPopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPopupViewController.swift; sourceTree = "<group>"; };
-		FE4AF84122F872A5005B8A9D /* CustomPopupViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomPopupViewController.xib; sourceTree = "<group>"; };
+		FE4AF84022F872A5005B8A9D /* CustomPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPopup.swift; sourceTree = "<group>"; };
+		FE4AF84122F872A5005B8A9D /* CustomPopup.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomPopup.xib; sourceTree = "<group>"; };
 		FE4AF84422F89C59005B8A9D /* Genres.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Genres.swift; sourceTree = "<group>"; };
 		FE6F72A322B2E10D00A44D4B /* BourneMovie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BourneMovie.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE6F72A622B2E10D00A44D4B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -176,8 +176,8 @@
 		FEB6E7BA22F7003900077445 /* CustomPopup */ = {
 			isa = PBXGroup;
 			children = (
-				FE4AF84022F872A5005B8A9D /* CustomPopupViewController.swift */,
-				FE4AF84122F872A5005B8A9D /* CustomPopupViewController.xib */,
+				FE4AF84022F872A5005B8A9D /* CustomPopup.swift */,
+				FE4AF84122F872A5005B8A9D /* CustomPopup.xib */,
 			);
 			path = CustomPopup;
 			sourceTree = "<group>";
@@ -242,7 +242,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FE4AF84322F872A5005B8A9D /* CustomPopupViewController.xib in Resources */,
+				FE4AF84322F872A5005B8A9D /* CustomPopup.xib in Resources */,
 				FE6F72B422B2E10F00A44D4B /* LaunchScreen.storyboard in Resources */,
 				FE6F72B122B2E10F00A44D4B /* Assets.xcassets in Resources */,
 				FE6F72AC22B2E10D00A44D4B /* Main.storyboard in Resources */,
@@ -305,7 +305,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FE4AF84222F872A5005B8A9D /* CustomPopupViewController.swift in Sources */,
+				FE4AF84222F872A5005B8A9D /* CustomPopup.swift in Sources */,
 				FEB6E7B822F4E14100077445 /* DetailViewController.swift in Sources */,
 				FE6F72A922B2E10D00A44D4B /* MoviemainController.swift in Sources */,
 				FE4AF84522F89C59005B8A9D /* Genres.swift in Sources */,

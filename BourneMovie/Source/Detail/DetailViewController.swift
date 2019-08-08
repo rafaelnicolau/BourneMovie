@@ -24,8 +24,8 @@ class DetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        parseDetail()
         formatBar()
+        validadeDetail()
         formatDetail()
         
 
@@ -42,6 +42,24 @@ class DetailViewController: UIViewController {
         nav?.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.orange]
     }
     
+    func validadeDetail(){
+        if self.id == nil{
+            self.ivImage.isHidden = true
+            self.lbCategory.isHidden = true
+            self.lbPopularity.isHidden = true
+            self.lbDescription.isHidden = true
+            self.btFavorite.isHidden = true
+            let vc = CustomPopup()
+            vc.modalTransitionStyle = .crossDissolve
+            vc.modalPresentationStyle = .overCurrentContext
+            self.present(vc, animated: true, completion: nil)
+        }else {
+            parseDetail()
+        }
+    }
+    
+    
+    
     func parseDetail(){
         for movie in 0..<Service.shared.result.count{
             if Service.shared.result[movie].id == self.id {
@@ -50,6 +68,7 @@ class DetailViewController: UIViewController {
                 self.detail.poster = Service.shared.result[movie].poster_path
                 self.detail.popularity = Service.shared.result[movie].popularity
                 self.detail.genre = Service.shared.result[movie].genre_ids
+                self.detail.rank = Service.shared.result[movie].vote_average
                 self.detail.favorite = false
                 break
             }
@@ -59,14 +78,15 @@ class DetailViewController: UIViewController {
     
     func formatDetail(){
         guard let genre = detail.genre?.first else { return }
-        self.lbDescription.text = detail.information
-        self.lbPopularity.text = "\(String(describing: detail.popularity))"
         localizeGenres(genre)
+        self.lbDescription.text = "\(detail.information!) Rank: \(detail.rank!)"
+        self.lbPopularity.text = "Votos: \(detail.popularity!)"
+        
         if let url = URL(string: Service.requestImage(image: detail.poster ?? "")) {
-    self.ivImage.kf.indicatorType = .activity
-    self.ivImage.kf.setImage(with: url)
-    if self.ivImage.image == nil {
-    self.ivImage.image = UIImage(named: "tron")
+            self.ivImage.kf.indicatorType = .activity
+            self.ivImage.kf.setImage(with: url)
+            if self.ivImage.image == nil {
+                self.ivImage.image = UIImage(named: "tron")
         
         }
     }
@@ -76,7 +96,7 @@ class DetailViewController: UIViewController {
         guard let genres = Service.shared.requestGenres?.genres else { return }
         for i in 0..<genres.count {
             if genres[i].id == id {
-                self.lbCategory.text = genres[i].name
+                self.lbCategory.text = "Genero: \(genres[i].name!)"
                 break
             }
         }
