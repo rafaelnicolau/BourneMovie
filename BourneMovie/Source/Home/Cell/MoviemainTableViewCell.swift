@@ -35,11 +35,15 @@ class MoviemainTableViewCell: UITableViewCell {
 
     func formatCell(_ movie: MovieResult) {
         if let vote = movie.vote_average {
-            self.lbRate.text = String(vote)
+            self.lbRate.text = "Rate: \(vote)"
         }
         self.lbNome.text = movie.title
         self.btDetail.layer.cornerRadius = 10
-        self.lbDate.text = movie.release_date
+        self.btDetail.layer.borderWidth = 2
+        self.btDetail.layer.borderColor = UIColor.orange.cgColor
+        self.btDetail.layer.backgroundColor = UIColor(named: "main")?.cgColor
+        
+        self.lbDate.text = "Lançamento: \(movie.release_date ?? "")"
         if let url = URL(string: Service.requestImage(image: movie.poster_path ?? "")) {
             ivImage.kf.indicatorType = .activity
             ivImage.kf.setImage(with: url)

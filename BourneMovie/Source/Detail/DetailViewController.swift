@@ -12,15 +12,16 @@ class DetailViewController: UIViewController {
 
     
     @IBOutlet weak var ivImage: UIImageView!
-    
+    @IBOutlet weak var backImage: UIImageView!
     @IBOutlet weak var lbDescription: UILabel!
     @IBOutlet weak var lbPopularity: UILabel!
     @IBOutlet weak var lbCategory: UILabel!
     @IBOutlet weak var btFavorite: UIButton!
     
-    private var detail = Detail()
+    private var movie = Movie()
     var id: Int?
     var indepath: IndexPath?
+    var favorite = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,11 +37,15 @@ class DetailViewController: UIViewController {
     
     func formatBar(){
         let nav = self.navigationController?.navigationBar
-        self.title = detail.title
+        self.title = movie.title
         navigationItem.largeTitleDisplayMode = .never
         nav?.tintColor = UIColor.orange
         nav?.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.orange]
     }
+    
+//    func formatFavoriteIcon(){
+//        let ImageIsEmpty = UIImage(named: "favoriteIsEmpty")
+//    }
     
     func validadeDetail(){
         if self.id == nil{
@@ -63,13 +68,14 @@ class DetailViewController: UIViewController {
     func parseDetail(){
         for movie in 0..<Service.shared.result.count{
             if Service.shared.result[movie].id == self.id {
-                self.detail.title = Service.shared.result[movie].title
-                self.detail.information = Service.shared.result[movie].overview
-                self.detail.poster = Service.shared.result[movie].poster_path
-                self.detail.popularity = Service.shared.result[movie].popularity
-                self.detail.genre = Service.shared.result[movie].genre_ids
-                self.detail.rank = Service.shared.result[movie].vote_average
-                self.detail.favorite = false
+                self.movie.title = Service.shared.result[movie].title
+                self.movie.overview = Service.shared.result[movie].overview
+                self.movie.poster_path = Service.shared.result[movie].poster_path
+                self.movie.popularity = Service.shared.result[movie].popularity
+                self.movie.genre_ids = Service.shared.result[movie].genre_ids
+                self.movie.vote_average = Service.shared.result[movie].vote_average
+                self.movie.backdrop_path = Service.shared.result[movie].backdrop_path
+                self.movie.favorite = false
                 break
             }
         }
@@ -77,18 +83,25 @@ class DetailViewController: UIViewController {
     
     
     func formatDetail(){
-        guard let genre = detail.genre?.first else { return }
+        guard let genre = movie.genre_ids?.first else { return }
         localizeGenres(genre)
-        self.lbDescription.text = "\(detail.information!) Rank: \(detail.rank!)"
-        self.lbPopularity.text = "Votos: \(detail.popularity!)"
+        self.lbDescription.text = "\(movie.overview!) Rank: \(movie.vote_average!)"
+        self.lbPopularity.text = "Votos: \(movie.popularity!)"
         
-        if let url = URL(string: Service.requestImage(image: detail.poster ?? "")) {
+        if let url = URL(string: Service.requestImage(image: movie.poster_path ?? "")) {
             self.ivImage.kf.indicatorType = .activity
             self.ivImage.kf.setImage(with: url)
             if self.ivImage.image == nil {
                 self.ivImage.image = UIImage(named: "tron")
-        
         }
+    }
+        if let url = URL(string: Service.requestImage(image: movie.backdrop_path ?? "")){
+            self.backImage.kf.indicatorType = .activity
+            self.backImage.kf.setImage(with: url)
+            if self.backImage.image == nil {
+                self.backImage.image = UIImage(named: "tron")
+            }
+//            self.backImage.alpha = 0.3
     }
 }
     
@@ -102,8 +115,31 @@ class DetailViewController: UIViewController {
         }
         
     }
+    func findFavoriteAndRemove(_ movie: Movie){
+        Service.shared.favorite.listFavorite = Service.shared.favorite.listFavorite.filter(){($0.title != movie.title )}
+    }
+    
+    func setFavorite(){
+        if !favorite {
+            let image = UIImage(named: "favoriteFull")
+            let newImage = image?.withRenderingMode(.alwaysTemplate)
+            self.btFavorite.setImage(newImage, for: .normal)
+            self.btFavorite.tintColor = .orange
+            Service.shared.favorite.listFavorite.append(movie)
+            self.favorite = true
+            
+        }else{
+            let image = UIImage(named: "favoriteIsEmpty")
+            let newImage = image?.withRenderingMode(.alwaysTemplate)
+            self.btFavorite.setImage(newImage, for: .normal)
+            self.btFavorite.tintColor = .orange
+            findFavoriteAndRemove(movie)
+            self.favorite = false
+        }
+    }
 
     @IBAction func btFavorite(_ sender: Any) {
+        setFavorite()
     }
     
 

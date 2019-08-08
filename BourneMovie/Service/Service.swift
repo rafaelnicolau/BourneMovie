@@ -19,8 +19,9 @@ class Service {
     var serviceRequest: MovieInfo?
     var requestGenres: MovieGenres?
     var result = [MovieResult]()
+    var favorite = Favorite()
     
-    var detail: Detail?
+//    var detail: Detail?
     
     
     class func requestImage(image: String) -> String {

@@ -41,7 +41,6 @@ class MoviemainController: UIViewController {
     func setupNavBar() {
         let nav = navigationController
         nav?.navigationBar.tintColor = .orange
-        nav?.navigationBar.tintColor = UIColor.white
         nav?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.orange]
         nav?.navigationBar.prefersLargeTitles = true
         self.searchController.searchResultsUpdater = self
