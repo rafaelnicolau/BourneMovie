@@ -25,14 +25,15 @@ class DetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        validadeFavorite()
         formatBar()
         validadeDetail()
         formatDetail()
-        
-
-        // Do any additional setup after loading the view.
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        validadeFavorite()
+    }
    
     
     func formatBar(){
@@ -41,6 +42,7 @@ class DetailViewController: UIViewController {
         navigationItem.largeTitleDisplayMode = .never
         nav?.tintColor = UIColor.orange
         nav?.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.orange]
+       self.tabBarController?.tabBar.isHidden = true
     }
     
 //    func formatFavoriteIcon(){
@@ -85,7 +87,7 @@ class DetailViewController: UIViewController {
     func formatDetail(){
         guard let genre = movie.genre_ids?.first else { return }
         localizeGenres(genre)
-        self.lbDescription.text = "\(movie.overview!) Rank: \(movie.vote_average!)"
+        self.lbDescription.text = "\(movie.overview!) Rate: \(movie.vote_average!)"
         self.lbPopularity.text = "Votos: \(movie.popularity!)"
         
         if let url = URL(string: Service.requestImage(image: movie.poster_path ?? "")) {
@@ -101,7 +103,6 @@ class DetailViewController: UIViewController {
             if self.backImage.image == nil {
                 self.backImage.image = UIImage(named: "tron")
             }
-//            self.backImage.alpha = 0.3
     }
 }
     
@@ -135,6 +136,16 @@ class DetailViewController: UIViewController {
             self.btFavorite.tintColor = .orange
             findFavoriteAndRemove(movie)
             self.favorite = false
+        }
+    }
+    
+    func validadeFavorite(){
+        if Service.shared.favorite.listFavorite.contains(where: { ($0.title == movie.title)}) {
+         self.favorite = true
+            self.btFavorite.setImage(UIImage(named: "favoriteFull"), for: .normal)
+        }else {
+            self.favorite = false
+            self.btFavorite.setImage(UIImage(named: "favoriteIsEmpty"), for: .normal)
         }
     }
 

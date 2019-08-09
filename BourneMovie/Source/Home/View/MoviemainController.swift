@@ -26,6 +26,7 @@ class MoviemainController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.tabBarController?.tabBar.isHidden = false
         setupNavBar()
         self.indicator.isHidden = false
         self.tbMovie.isHidden = true
@@ -35,6 +36,7 @@ class MoviemainController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         setupNavBar()
+        self.tabBarController?.tabBar.isHidden = false
         self.tbMovie.reloadData()
     }
     
@@ -50,6 +52,7 @@ class MoviemainController: UIViewController {
         self.searchController.searchBar.value(forKey: "searchField") as! UITextField
         self.searchController.searchBar.placeholder = "Search Title"
         self.searchController.searchBar.tintColor = .white
+        self.searchController.searchBar.barStyle = .blackTranslucent
         navigationItem.searchController = searchController
     }
     
@@ -141,7 +144,7 @@ extension MoviemainController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == Service.shared.result.count - 2 && Service.shared.result.count != totalPages && !loadingMovie {
+        if indexPath.row == Service.shared.result.count - 5 && Service.shared.result.count != totalPages && !loadingMovie {
             if let page = currentPage {
                 self.currentPage = page + 1
                 self.loadFirstList()

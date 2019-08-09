@@ -59,7 +59,15 @@ extension FavoriteViewController: UITableViewDelegate, UITableViewDataSource{
         let movie = Service.shared.favorite.listFavorite[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "favoriteCell", for: indexPath) as! FavoriteTableViewCell
         cell.formatCell(movie)
+        cell.movie = movie
+        cell.delegate = self
         return cell
+    }
+}
+
+extension FavoriteViewController: FavoriteCellDelegate{
+    func tableViewReload() {
+        self.showTableView()
     }
     
     
