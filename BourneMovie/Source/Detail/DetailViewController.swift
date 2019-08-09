@@ -45,10 +45,6 @@ class DetailViewController: UIViewController {
        self.tabBarController?.tabBar.isHidden = true
     }
     
-//    func formatFavoriteIcon(){
-//        let ImageIsEmpty = UIImage(named: "favoriteIsEmpty")
-//    }
-    
     func validadeDetail(){
         if self.id == nil{
             self.ivImage.isHidden = true
@@ -87,8 +83,12 @@ class DetailViewController: UIViewController {
     func formatDetail(){
         guard let genre = movie.genre_ids?.first else { return }
         localizeGenres(genre)
-        self.lbDescription.text = "\(movie.overview!) Rate: \(movie.vote_average!)"
-        self.lbPopularity.text = "Votos: \(movie.popularity!)"
+        if movie.overview == ""{
+            self.lbDescription.text = "Filme sem Descrição..."
+        } else {
+           self.lbDescription.text = "\(movie.overview ?? "Filme sem Descrição") Rate: \(movie.vote_average ?? 0.0)"
+        }
+        self.lbPopularity.text = "Votos: \(movie.popularity ?? 0.0)"
         
         if let url = URL(string: Service.requestImage(image: movie.poster_path ?? "")) {
             self.ivImage.kf.indicatorType = .activity

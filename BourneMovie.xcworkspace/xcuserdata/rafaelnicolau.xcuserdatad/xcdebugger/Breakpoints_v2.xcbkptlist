@@ -74,7 +74,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BourneMovie/Source/Home/View/MoviemainController.swift"
-            timestampString = "587049451.997999"
+            timestampString = "587055189.9217041"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "70"
@@ -90,11 +90,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BourneMovie/Source/Detail/DetailViewController.swift"
-            timestampString = "587049451.998145"
+            timestampString = "587055189.921785"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "53"
-            endingLineNumber = "53"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
             landmarkName = "validadeDetail()"
             landmarkType = "7">
          </BreakpointContent>
