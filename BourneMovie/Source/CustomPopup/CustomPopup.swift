@@ -10,8 +10,11 @@ import UIKit
 
 class CustomPopup: UIViewController {
 
+    @IBOutlet weak var popUPView: UIView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.popUPView.layer.cornerRadius = 10
 
         // Do any additional setup after loading the view.
     }

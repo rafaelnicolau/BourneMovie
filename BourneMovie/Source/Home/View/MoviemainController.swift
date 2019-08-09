@@ -26,12 +26,12 @@ class MoviemainController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tabBarController?.tabBar.isHidden = false
+//        self.tabBarController?.tabBar.isHidden = false
         setupNavBar()
         self.indicator.isHidden = false
         self.tbMovie.isHidden = true
         loadGenres()
-        loadFirstList()
+        showServiceTableView()
         }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -64,7 +64,7 @@ class MoviemainController: UIViewController {
     }
    
     
-    func loadFirstList() {
+    func showServiceTableView() {
         self.loadingMovie = true
         MovieAPI.loadMovies(numberPage: currentPage, onComplete: { [weak self] (movie) in
             Service.shared.serviceRequest = movie
@@ -80,8 +80,18 @@ class MoviemainController: UIViewController {
         }) { (error) in
             self.tbMovie.isHidden = true
             self.indicator.isHidden = false
-            print(error)
-        }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0, execute: {
+                self.popupError()
+                self.showServiceTableView()
+            }
+        )}
+    }
+    
+    func popupError(){
+        let vc = CustomPopup()
+        vc.modalTransitionStyle = .crossDissolve
+        vc.modalPresentationStyle = .overCurrentContext
+        self.present(vc, animated: true, completion: nil)
     }
     
     
@@ -147,7 +157,7 @@ extension MoviemainController: UITableViewDataSource, UITableViewDelegate {
         if indexPath.row == Service.shared.result.count - 5 && Service.shared.result.count != totalPages && !loadingMovie {
             if let page = currentPage {
                 self.currentPage = page + 1
-                self.loadFirstList()
+                self.showServiceTableView()
             }
             
         }
