@@ -21,7 +21,7 @@ class FavoriteTableViewCell: UITableViewCell {
     @IBOutlet weak var lbScoreRank: UILabel!
     @IBOutlet weak var btFavorite: UIButton!
     
-    var movie = Movie()
+    var movie: MovieViewData?
     var delegate: FavoriteCellDelegate?
     
     override func awakeFromNib() {
@@ -35,12 +35,10 @@ class FavoriteTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
-    func formatCell(_ movie: Movie) {
-        self.lbTitle.text = movie.title
-        if let rate = movie.vote_average, let popularity = movie.popularity {
-            self.lbScoreRank.text = "Votos: \(popularity), Rate: \(rate)"
-        }
-        if let url = URL(string: Service.requestImage(image: movie.poster_path ?? "")) {
+    func formatCell(_ movie: MovieViewData) {
+        self.lbTitle.text = movie.nomeFilme
+        self.lbScoreRank.text = "Votos: \(movie.votos), Rate: \(movie.rate)"
+        if let url = URL(string: Service.requestImage(image: movie.poster)) {
             uiImage.kf.indicatorType = .activity
             uiImage.kf.setImage(with: url)
             if uiImage.image == nil {
@@ -50,7 +48,7 @@ class FavoriteTableViewCell: UITableViewCell {
     }
     
     func removeFavorite(){
-        Service.shared.favorite.listFavorite = Service.shared.favorite.listFavorite.filter(){($0.title != movie.title )}
+        Service.shared.favorite.listFavorite = Service.shared.favorite.listFavorite.filter(){($0.id != movie?.id )}
         self.delegate?.tableViewReload()
         
     }

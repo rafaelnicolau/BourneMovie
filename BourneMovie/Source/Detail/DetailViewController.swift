@@ -18,9 +18,8 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var lbCategory: UILabel!
     @IBOutlet weak var btFavorite: UIButton!
     
-    private var movie = Movie()
-    var id: Int?
-    var indepath: IndexPath?
+    var movie: MovieViewData?
+
     var favorite = false
     
     override func viewDidLoad() {
@@ -38,7 +37,7 @@ class DetailViewController: UIViewController {
     
     func formatBar(){
         let nav = self.navigationController?.navigationBar
-        self.title = movie.title
+        self.title = movie?.nomeFilme
         navigationItem.largeTitleDisplayMode = .never
         nav?.tintColor = UIColor.orange
         nav?.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.orange]
@@ -46,7 +45,7 @@ class DetailViewController: UIViewController {
     }
     
     func validadeDetail(){
-        if self.id == nil{
+        if self.movie == nil{
             self.ivImage.isHidden = true
             self.lbCategory.isHidden = true
             self.lbPopularity.isHidden = true
@@ -56,48 +55,47 @@ class DetailViewController: UIViewController {
             vc.modalTransitionStyle = .crossDissolve
             vc.modalPresentationStyle = .overCurrentContext
             self.present(vc, animated: true, completion: nil)
-        }else {
-            parseDetail()
         }
     }
     
     
     
-    func parseDetail(){
-        for movie in 0..<Service.shared.result.count{
-            if Service.shared.result[movie].id == self.id {
-                self.movie.title = Service.shared.result[movie].title
-                self.movie.overview = Service.shared.result[movie].overview
-                self.movie.poster_path = Service.shared.result[movie].poster_path
-                self.movie.popularity = Service.shared.result[movie].popularity
-                self.movie.genre_ids = Service.shared.result[movie].genre_ids
-                self.movie.vote_average = Service.shared.result[movie].vote_average
-                self.movie.backdrop_path = Service.shared.result[movie].backdrop_path
-                self.movie.favorite = false
-                break
-            }
-        }
-    }
+//    func parseDetail(){
+//        for movie in 0..<Service.shared.result.count{
+//            if Service.shared.result[movie].id == self.id {
+//                self.movie.title = Service.shared.result[movie].title
+//                self.movie.overview = Service.shared.result[movie].overview
+//                self.movie.poster_path = Service.shared.result[movie].poster_path
+//                self.movie.popularity = Service.shared.result[movie].popularity
+//                self.movie.genre_ids = Service.shared.result[movie].genre_ids
+//                self.movie.vote_average = Service.shared.result[movie].vote_average
+//                self.movie.backdrop_path = Service.shared.result[movie].backdrop_path
+//                self.movie.favorite = false
+//                break
+//            }
+//        }
+//    }
     
     
     func formatDetail(){
-        guard let genre = movie.genre_ids?.first else { return }
+        guard let movie = self.movie else { return }
+        guard let genre = movie.genero.first else { return }
         localizeGenres(genre)
-        if movie.overview == ""{
+        if movie.descricao == ""{
             self.lbDescription.text = "Filme sem Descrição..."
         } else {
-           self.lbDescription.text = "\(movie.overview ?? "Filme sem Descrição") Rate: \(movie.vote_average ?? 0.0)"
+           self.lbDescription.text = "\(movie.descricao) Rate: \(movie.rate)"
         }
-        self.lbPopularity.text = "Votos: \(movie.popularity ?? 0.0)"
+        self.lbPopularity.text = "Votos: \(movie.votos)"
         
-        if let url = URL(string: Service.requestImage(image: movie.poster_path ?? "")) {
+        if let url = URL(string: Service.requestImage(image: movie.poster)) {
             self.ivImage.kf.indicatorType = .activity
             self.ivImage.kf.setImage(with: url)
             if self.ivImage.image == nil {
                 self.ivImage.image = UIImage(named: "tron")
         }
     }
-        if let url = URL(string: Service.requestImage(image: movie.backdrop_path ?? "")){
+        if let url = URL(string: Service.requestImage(image: movie.backPoster)){
             self.backImage.kf.indicatorType = .activity
             self.backImage.kf.setImage(with: url)
             if self.backImage.image == nil {
@@ -116,35 +114,37 @@ class DetailViewController: UIViewController {
         }
         
     }
-    func findFavoriteAndRemove(_ movie: Movie){
-        Service.shared.favorite.listFavorite = Service.shared.favorite.listFavorite.filter(){($0.title != movie.title )}
+    func findFavoriteAndRemove(_ movie: MovieViewData){
+        Service.shared.favorite.listFavorite = Service.shared.favorite.listFavorite.filter(){($0.id != movie.id)}
     }
     
     func setFavorite(){
-        if !favorite {
+        guard let movie = movie else { return }
+        if !movie.favorite {
             let image = UIImage(named: "favoriteFull")
             let newImage = image?.withRenderingMode(.alwaysTemplate)
             self.btFavorite.setImage(newImage, for: .normal)
             self.btFavorite.tintColor = .orange
-            Service.shared.favorite.listFavorite.append(movie)
-            self.favorite = true
+            self.movie?.favorite = true
+            Service.shared.favorite.listFavorite.append(self.movie!)
+            
             
         }else{
             let image = UIImage(named: "favoriteIsEmpty")
             let newImage = image?.withRenderingMode(.alwaysTemplate)
             self.btFavorite.setImage(newImage, for: .normal)
             self.btFavorite.tintColor = .orange
+            self.movie?.favorite = false
             findFavoriteAndRemove(movie)
-            self.favorite = false
         }
     }
     
     func validadeFavorite(){
-        if Service.shared.favorite.listFavorite.contains(where: { ($0.title == movie.title)}) {
-         self.favorite = true
+        if Service.shared.favorite.listFavorite.contains(where: { ($0.id == movie?.id)}) {
+         self.movie?.favorite = true
             self.btFavorite.setImage(UIImage(named: "favoriteFull"), for: .normal)
         }else {
-            self.favorite = false
+            self.movie?.favorite = false
             self.btFavorite.setImage(UIImage(named: "favoriteIsEmpty"), for: .normal)
         }
     }

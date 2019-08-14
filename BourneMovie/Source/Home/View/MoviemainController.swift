@@ -8,14 +8,6 @@
 
 import UIKit
 
-protocol MoviemainViewDelegate: NSObjectProtocol{
-    func getMovieService(movieInfo: MovieInfo?, movieResult: MovieResult?)
-    func movieDidLoaded(movieData: [MovieViewData])
-    func hideLoading()
-    func showLoading()
-    func reloadMovies()
-}
-
 class MoviemainController: UIViewController {
 
     @IBOutlet weak var indicator: UIActivityIndicatorView!
@@ -25,13 +17,11 @@ class MoviemainController: UIViewController {
     
     private let moviemainPresenter = MoviemainPresenter()
     
-    private var idMovie: Int?
-    private var indexpath: IndexPath?
+    private var movie: MovieViewData?
     let searchController = UISearchController(searchResultsController: nil)
-    var filterMovies = [MovieResult]()
-    private var currentPage: Int?
-    private var totalPages: Int?
-    var loadingMovie = false
+    private var filterMovies = [MovieViewData]()
+    private var movieViewData = [MovieViewData]()
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,8 +31,6 @@ class MoviemainController: UIViewController {
         setupNavBar()
         self.indicator.isHidden = false
         self.tbMovie.isHidden = true
-//        loadGenres()
-//        showServiceTableView()
         }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -68,61 +56,20 @@ class MoviemainController: UIViewController {
     }
     
     func filterContentForSearchText(searchText: String) {
-        filterMovies = Service.shared.result.filter{ movie in
-            return (movie.title?.lowercased().contains(searchText.lowercased()))!
-            }
+        filterMovies = movieViewData.filter({ movie in
+            return (movie.nomeFilme.lowercased().contains(searchText.lowercased()))
+        })
             self.tbMovie.reloadData()
-    }
-   
-    
-    func showServiceTableView() {
-        self.loadingMovie = true
-        MovieAPI.loadMovies(numberPage: currentPage, onComplete: { [weak self] (movie) in
-            Service.shared.serviceRequest = movie
-            self?.currentPage = Service.shared.serviceRequest?.page
-            self?.totalPages = Service.shared.serviceRequest?.total_pages
-            guard let result = movie?.results else { return }
-            Service.shared.result += result
-            DispatchQueue.main.async {
-                self?.tbMovie.reloadData()
-                self?.tbMovie.isHidden = false
-                self?.loadingMovie = false
-            }
-        }) { (error) in
-            self.tbMovie.isHidden = true
-            self.indicator.isHidden = false
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0, execute: {
-                self.popupError()
-                self.showServiceTableView()
-            }
-        )}
-    }
-    
-    func popupError(){
-        let vc = CustomPopup()
-        vc.modalTransitionStyle = .crossDissolve
-        vc.modalPresentationStyle = .overCurrentContext
-        self.present(vc, animated: true, completion: nil)
-    }
-    
-    
-    func loadGenres() {
-        MovieAPI.loadGenre(onComplete: {(genres) in
-            Service.shared.requestGenres = genres
-        }) { (error) in
-            print(error)
-        }
     }
    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let vc = segue.destination as! DetailViewController
-        vc.id = self.idMovie
-        vc.indepath = self.indexpath
+        vc.movie = self.movie
+        
     }
     
 }
-
 
 
 extension MoviemainController: UITableViewDataSource, UITableViewDelegate {
@@ -133,7 +80,7 @@ extension MoviemainController: UITableViewDataSource, UITableViewDelegate {
         return self.filterMovies.count
         }
         
-        return Service.shared.result.count
+        return movieViewData.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -141,45 +88,30 @@ extension MoviemainController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let movie: MovieResult
+        let movie: MovieViewData
         if searchController.isActive && searchController.searchBar.text != ""{
             movie = self.filterMovies[indexPath.row]
         }else {
-            movie = Service.shared.result[indexPath.row]
+            movie = movieViewData[indexPath.row]
         }
         
         let cell = self.tbMovie.dequeueReusableCell(withIdentifier: "cellMovie") as! MoviemainTableViewCell
         cell.formatCell(movie)
         cell.delegate = self
         cell.result = movie
-        cell.id = movie.id
-        cell.indexpath = indexPath
         return cell
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == Service.shared.result.count - 5 && Service.shared.result.count != totalPages && !loadingMovie {
-            if let page = currentPage {
-                self.currentPage = page + 1
-                self.showServiceTableView()
+        if indexPath.row == movieViewData.count - 5 && movieViewData.count != moviemainPresenter.totalPages && !moviemainPresenter.loadingMovie {
+            if let page = moviemainPresenter.currentPage {
+                moviemainPresenter.currentPage = page + 1
+                moviemainPresenter.loadMovies()
             }
             
         }
     }
 
-}
-
-extension MoviemainController: MoviemainDelegate {
-    func object(id: Int, indexPath: IndexPath) {
-        self.idMovie = id
-        self.indexpath = indexPath
-    }
-    
-    func tableviewReload() {
-        self.tbMovie.reloadData()
-    }
-    
-    
 }
 
 extension MoviemainController: UISearchBarDelegate {
@@ -193,25 +125,39 @@ extension MoviemainController: UISearchResultsUpdating {
 }
 
 extension MoviemainController: MoviemainViewDelegate {
-    func movieDidLoaded(movieData: [MovieViewData]) {
+    func setMovie(_ movie: MovieViewData) {
+        self.movie = movie
+    }
+    
+    func showTableView() {
+        self.tbMovie.isHidden = false
+        self.tbMovie.reloadData()
+    }
+    
+    func stopLoading() {
         //
     }
     
-    func hideLoading() {
+    func emptyList() {
         //
+    }
+    
+    func gernicError() {
+        self.indicator.isHidden = false
+        self.tbMovie.isHidden = true
+        let vc = CustomPopup()
+        vc.modalTransitionStyle = .crossDissolve
+        vc.modalPresentationStyle = .overCurrentContext
+        self.present(vc, animated: true, completion: nil)
+    }
+    
+    func setViewData(_ viewData: [MovieViewData]) {
+        self.movieViewData = viewData
     }
     
     func showLoading() {
         //
     }
     
-    func reloadMovies() {
-        //
-    }
-    
-    func getMovieService(movieInfo: MovieInfo?, movieResult: MovieResult?) {
-        self.tbMovie.reloadData()
-    }
-    
-    
+
 }

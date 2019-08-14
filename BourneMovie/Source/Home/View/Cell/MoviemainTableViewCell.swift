@@ -9,10 +9,10 @@
 import UIKit
 import Kingfisher
 
-protocol MoviemainDelegate: NSObjectProtocol {
-    func object(id: Int, indexPath: IndexPath )
-    func tableviewReload()
-}
+//protocol MoviemainDelegate: NSObjectProtocol {
+//    func object(id: Int, indexPath: IndexPath )
+//    func tableviewReload()
+//}
 
 class MoviemainTableViewCell: UITableViewCell {
 
@@ -23,8 +23,8 @@ class MoviemainTableViewCell: UITableViewCell {
     @IBOutlet weak var lbDate: UILabel!
     @IBOutlet weak var btDetail: UIButton!
     
-    var delegate: MoviemainDelegate?
-    var result: MovieResult?
+    var delegate: MoviemainViewDelegate?
+    var result: MovieViewData?
     var id: Int?
     var indexpath: IndexPath?
     
@@ -33,18 +33,17 @@ class MoviemainTableViewCell: UITableViewCell {
         // Initialization code
     }
 
-    func formatCell(_ movie: MovieResult) {
-        if let vote = movie.vote_average {
-            self.lbRate.text = "Rate: \(vote)"
-        }
-        self.lbNome.text = movie.title
+    func formatCell(_ movie: MovieViewData) {
+        
+        self.lbRate.text = "Rate: \(movie.rate)"
+        self.lbNome.text = movie.nomeFilme
         self.btDetail.layer.cornerRadius = 10
         self.btDetail.layer.borderWidth = 2
         self.btDetail.layer.borderColor = UIColor.orange.cgColor
         self.btDetail.layer.backgroundColor = UIColor(named: "main")?.cgColor
         
-        self.lbDate.text = "Lançamento: \(movie.release_date ?? "")"
-        if let url = URL(string: Service.requestImage(image: movie.poster_path ?? "")) {
+        self.lbDate.text = "Lançamento: \(movie.dataLancamento)"
+        if let url = URL(string: Service.requestImage(image: movie.poster)) {
             ivImage.kf.indicatorType = .activity
             ivImage.kf.setImage(with: url)
             if ivImage.image == nil {
@@ -62,9 +61,8 @@ class MoviemainTableViewCell: UITableViewCell {
     
     
     @IBAction func btDetail(_ sender: Any) {
-        if let id = self.id, let indexpath = self.indexpath {
-            delegate?.object(id: id, indexPath: indexpath)
-            delegate?.tableviewReload()
+        if let result = self.result {
+            delegate?.setMovie(result)
         }
         
     }

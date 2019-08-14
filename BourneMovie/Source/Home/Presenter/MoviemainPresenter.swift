@@ -8,29 +8,33 @@
 
 import Foundation
 
+protocol MoviemainViewDelegate: NSObjectProtocol{
+    //func getMovieService(movieInfo: MovieInfo?, movieResult: MovieResult?)
+    //func movieDidLoaded(movieData: [MovieViewData])
+    //func hideLoading(loadIndicator: Bool)
+    //func movieTableView(table: Bool)
+    //func showLoading()
+    //func reloadMovies()
+    //func popUpError()
+    func showTableView()
+    func showLoading()
+    func stopLoading()
+    func emptyList()
+    func gernicError()
+    func setViewData(_ viewData: [MovieViewData])
+    func setMovie(_ movie: MovieViewData)
+}
 
 class MoviemainPresenter {
     
-    private var currentPage: Int?
-    private var totalPages: Int?
-    var movieViewData: [MovieViewData]?
+    var currentPage: Int?
+    var totalPages: Int?
+    var loadingMovie = false
+    private var movieViewData = [MovieViewData]()
     weak private var moviemainViewDelegate: MoviemainViewDelegate?
-//    private let service: Service
-    
-//    init(service: Service) {
-//        self.service = service
-//    }
     
     func setDelegate(moviemainViewDelegate: MoviemainViewDelegate){
         self.moviemainViewDelegate = moviemainViewDelegate
-    }
-
-    //MARK POPUPERROR
-    func popUpError(){
-        let vc = CustomPopup()
-        vc.modalTransitionStyle = .crossDissolve
-        vc.modalPresentationStyle = .overCurrentContext
-//        present(vc, animated: true, completion: nil)
     }
     
     //MARK LOAD_SERVICES
@@ -43,23 +47,27 @@ class MoviemainPresenter {
     }
     
     func loadMovies(){
+        loadingMovie = true
         MovieAPI.loadMovies(numberPage: currentPage, onComplete: { [weak self] (movie) in
             Service.shared.serviceRequest = movie
             self?.currentPage = Service.shared.serviceRequest?.page
             self?.totalPages = Service.shared.serviceRequest?.total_pages
             guard let result = movie?.results else { return }
             Service.shared.result += result
-            let viewData = Service.shared.result.map({ (movie) -> MovieViewData? in
+            self?.movieViewData = Service.shared.result.map({ (movie) -> MovieViewData in
                 return MovieViewData(movieResult: movie)
             })
-            print(viewData)
-            //Service.shared.result > MovieViewData
-            
-           
-            
-            
+            DispatchQueue.main.async {
+                self?.moviemainViewDelegate?.setViewData(self!.movieViewData)
+                self?.moviemainViewDelegate?.showTableView()
+                self?.loadingMovie = false
+            }
         }) { (error) in
-        
+        self.moviemainViewDelegate?.gernicError()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0 , execute: {
+            self.moviemainViewDelegate?.gernicError()
+            self.loadMovies()
+            })
         }
     
     }
