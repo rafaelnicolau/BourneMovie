@@ -8,6 +8,14 @@
 
 import UIKit
 
+protocol MoviemainViewDelegate: NSObjectProtocol{
+    func getMovieService(movieInfo: MovieInfo?, movieResult: MovieResult?)
+    func movieDidLoaded(movieData: [MovieViewData])
+    func hideLoading()
+    func showLoading()
+    func reloadMovies()
+}
+
 class MoviemainController: UIViewController {
 
     @IBOutlet weak var indicator: UIActivityIndicatorView!
@@ -15,6 +23,7 @@ class MoviemainController: UIViewController {
     @IBOutlet weak var SecondView: UIView!
     @IBOutlet weak var tbMovie: UITableView!
     
+    private let moviemainPresenter = MoviemainPresenter()
     
     private var idMovie: Int?
     private var indexpath: IndexPath?
@@ -26,12 +35,14 @@ class MoviemainController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        self.tabBarController?.tabBar.isHidden = false
+        moviemainPresenter.setDelegate(moviemainViewDelegate: self)
+        moviemainPresenter.loadGenres()
+        moviemainPresenter.loadMovies()
         setupNavBar()
         self.indicator.isHidden = false
         self.tbMovie.isHidden = true
-        loadGenres()
-        showServiceTableView()
+//        loadGenres()
+//        showServiceTableView()
         }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -109,13 +120,6 @@ class MoviemainController: UIViewController {
         vc.id = self.idMovie
         vc.indepath = self.indexpath
     }
-
-    
-    func alerta(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "OK", style: .default ))
-        self.present(alert, animated: true, completion: nil)
-    }
     
 }
 
@@ -185,6 +189,28 @@ extension MoviemainController: UISearchBarDelegate {
 extension MoviemainController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         filterContentForSearchText(searchText: searchController.searchBar.text!)
+    }
+}
+
+extension MoviemainController: MoviemainViewDelegate {
+    func movieDidLoaded(movieData: [MovieViewData]) {
+        //
+    }
+    
+    func hideLoading() {
+        //
+    }
+    
+    func showLoading() {
+        //
+    }
+    
+    func reloadMovies() {
+        //
+    }
+    
+    func getMovieService(movieInfo: MovieInfo?, movieResult: MovieResult?) {
+        self.tbMovie.reloadData()
     }
     
     

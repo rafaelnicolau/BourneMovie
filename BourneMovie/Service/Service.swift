@@ -21,8 +21,6 @@ class Service {
     var result = [MovieResult]()
     var favorite = Favorite()
     
-//    var detail: Detail?
-    
     
     class func requestImage(image: String) -> String {
         let basePath = "https://image.tmdb.org/t/p/w500/"
