@@ -143,12 +143,14 @@ extension MoviemainController: MoviemainViewDelegate {
     }
     
     func gernicError() {
-        self.indicator.isHidden = false
-        self.tbMovie.isHidden = true
-        let vc = CustomPopup()
-        vc.modalTransitionStyle = .crossDissolve
-        vc.modalPresentationStyle = .overCurrentContext
-        self.present(vc, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            self.indicator.isHidden = false
+            self.tbMovie.isHidden = true
+            let vc = CustomPopup()
+            vc.modalTransitionStyle = .crossDissolve
+            vc.modalPresentationStyle = .overCurrentContext
+            self.present(vc, animated: true, completion: nil)
+        }
     }
     
     func setViewData(_ viewData: [MovieViewData]) {

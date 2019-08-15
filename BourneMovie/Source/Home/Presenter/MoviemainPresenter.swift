@@ -9,13 +9,6 @@
 import Foundation
 
 protocol MoviemainViewDelegate: NSObjectProtocol{
-    //func getMovieService(movieInfo: MovieInfo?, movieResult: MovieResult?)
-    //func movieDidLoaded(movieData: [MovieViewData])
-    //func hideLoading(loadIndicator: Bool)
-    //func movieTableView(table: Bool)
-    //func showLoading()
-    //func reloadMovies()
-    //func popUpError()
     func showTableView()
     func showLoading()
     func stopLoading()

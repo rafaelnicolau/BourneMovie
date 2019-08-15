@@ -58,25 +58,6 @@ class DetailViewController: UIViewController {
         }
     }
     
-    
-    
-//    func parseDetail(){
-//        for movie in 0..<Service.shared.result.count{
-//            if Service.shared.result[movie].id == self.id {
-//                self.movie.title = Service.shared.result[movie].title
-//                self.movie.overview = Service.shared.result[movie].overview
-//                self.movie.poster_path = Service.shared.result[movie].poster_path
-//                self.movie.popularity = Service.shared.result[movie].popularity
-//                self.movie.genre_ids = Service.shared.result[movie].genre_ids
-//                self.movie.vote_average = Service.shared.result[movie].vote_average
-//                self.movie.backdrop_path = Service.shared.result[movie].backdrop_path
-//                self.movie.favorite = false
-//                break
-//            }
-//        }
-//    }
-    
-    
     func formatDetail(){
         guard let movie = self.movie else { return }
         guard let genre = movie.genero.first else { return }

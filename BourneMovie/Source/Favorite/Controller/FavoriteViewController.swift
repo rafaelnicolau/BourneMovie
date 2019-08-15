@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class FavoriteViewController: UIViewController {
 
@@ -14,8 +15,14 @@ class FavoriteViewController: UIViewController {
     @IBOutlet weak var tbFavorite: UITableView!
     @IBOutlet weak var lbText: UILabel!
     
+    private let favoritePresenter = FavoritePresenter()
+    private var movieViewData = [MovieViewData]()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.favoritePresenter.setDelegate(favoriteDelegate: self)
+        self.favoritePresenter.loadFavorite()
         let nib = UINib.init(nibName: "FavoriteTableViewCell", bundle: nil)
         self.tbFavorite.register(nib, forCellReuseIdentifier: "favoriteCell")
         self.tbFavorite.backgroundColor = .clear
@@ -24,11 +31,12 @@ class FavoriteViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        self.favoritePresenter.loadFavorite()
         showTableView()
     }
     
     func showTableView(){
-        if Service.shared.favorite.listFavorite.isEmpty || Service.shared.favorite.listFavorite.count == 0{
+        if self.movieViewData.isEmpty || self.movieViewData.count == 0{
             self.tbFavorite.isHidden = true
             self.lbText.isHidden = false
             self.lbText.text = "Nenhum filme no Favoritos..."
@@ -39,15 +47,14 @@ class FavoriteViewController: UIViewController {
             self.tbFavorite.reloadData()
         }
     }
-  
-
+    
 }
 
 extension FavoriteViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return Service.shared.favorite.listFavorite.count
+        return self.movieViewData.count
         
     }
     
@@ -56,7 +63,7 @@ extension FavoriteViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let movie = Service.shared.favorite.listFavorite[indexPath.row]
+        let movie = self.movieViewData[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "favoriteCell", for: indexPath) as! FavoriteTableViewCell
         cell.formatCell(movie)
         cell.movie = movie
@@ -65,9 +72,39 @@ extension FavoriteViewController: UITableViewDelegate, UITableViewDataSource{
     }
 }
 
-extension FavoriteViewController: FavoriteCellDelegate{
+extension FavoriteViewController: FavoriteDelegate{
+    func removeFavorite(_ movie: MovieViewData) {
+         self.movieViewData = self.movieViewData.filter(){($0.id != movie.id )}
+        self.tbFavorite.reloadData()
+    }
+    
+    func showLoading() {
+        //
+    }
+    
+    func stopLoading() {
+        //
+    }
+    
+    func emptyList() {
+        //
+    }
+    
+    func gernicError() {
+        //
+    }
+    
+    func setViewData(_ viewData: [MovieViewData]) {
+        self.movieViewData = viewData
+    }
+    
+    func setMovie(_ movie: MovieViewData) {
+        //
+    }
+    
     func tableViewReload() {
         self.showTableView()
+        self.tbFavorite.reloadData()
     }
     
     

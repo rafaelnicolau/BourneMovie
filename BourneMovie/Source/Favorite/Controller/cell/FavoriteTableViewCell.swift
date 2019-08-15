@@ -9,9 +9,7 @@
 import UIKit
 import Kingfisher
 
-protocol FavoriteCellDelegate: NSObjectProtocol {
-    func tableViewReload()
-}
+
 
 class FavoriteTableViewCell: UITableViewCell {
 
@@ -22,7 +20,7 @@ class FavoriteTableViewCell: UITableViewCell {
     @IBOutlet weak var btFavorite: UIButton!
     
     var movie: MovieViewData?
-    var delegate: FavoriteCellDelegate?
+    var delegate: FavoriteDelegate?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -47,14 +45,9 @@ class FavoriteTableViewCell: UITableViewCell {
         }
     }
     
-    func removeFavorite(){
-        Service.shared.favorite.listFavorite = Service.shared.favorite.listFavorite.filter(){($0.id != movie?.id )}
-        self.delegate?.tableViewReload()
-        
-    }
-    
     @IBAction func btFavorite(_ sender: Any) {
-        removeFavorite()
+        guard let movie = movie else { return }
+        delegate?.removeFavorite(movie)
     }
     
     
