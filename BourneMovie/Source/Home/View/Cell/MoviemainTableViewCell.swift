@@ -9,11 +9,6 @@
 import UIKit
 import Kingfisher
 
-//protocol MoviemainDelegate: NSObjectProtocol {
-//    func object(id: Int, indexPath: IndexPath )
-//    func tableviewReload()
-//}
-
 class MoviemainTableViewCell: UITableViewCell {
 
     
@@ -23,18 +18,15 @@ class MoviemainTableViewCell: UITableViewCell {
     @IBOutlet weak var lbDate: UILabel!
     @IBOutlet weak var btDetail: UIButton!
     
-    var delegate: MoviemainViewDelegate?
-    var result: MovieViewData?
-    var id: Int?
-    var indexpath: IndexPath?
-    
+    var movieVideoInfo: MovieVideoInfo?
+    var showMovie: (() -> Void)?
+
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
 
     func formatCell(_ movie: MovieViewData) {
-        
         self.lbRate.text = "Rate: \(movie.rate)"
         self.lbNome.text = movie.nomeFilme
         self.btDetail.layer.cornerRadius = 10
@@ -51,7 +43,7 @@ class MoviemainTableViewCell: UITableViewCell {
             }
         }
     }
-    
+
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
@@ -61,10 +53,8 @@ class MoviemainTableViewCell: UITableViewCell {
     
     
     @IBAction func btDetail(_ sender: Any) {
-        if let result = self.result {
-            delegate?.setMovie(result)
-        }
-        
+        guard let showMovie = showMovie else { return }
+        showMovie()
     }
     
 }

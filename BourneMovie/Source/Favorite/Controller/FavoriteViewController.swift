@@ -75,6 +75,7 @@ extension FavoriteViewController: UITableViewDelegate, UITableViewDataSource{
 extension FavoriteViewController: FavoriteDelegate{
     func removeFavorite(_ movie: MovieViewData) {
          self.movieViewData = self.movieViewData.filter(){($0.id != movie.id )}
+        self.favoritePresenter.removeFavorite(movie)
         self.tbFavorite.reloadData()
     }
     

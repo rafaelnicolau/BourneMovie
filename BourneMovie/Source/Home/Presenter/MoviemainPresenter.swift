@@ -9,13 +9,12 @@
 import Foundation
 
 protocol MoviemainViewDelegate: NSObjectProtocol{
-    func showTableView()
     func showLoading()
     func stopLoading()
     func emptyList()
     func gernicError()
+    //func setMovieVideoInfo(_ movie: MovieVideoInfo)
     func setViewData(_ viewData: [MovieViewData])
-    func setMovie(_ movie: MovieViewData)
 }
 
 class MoviemainPresenter {
@@ -24,6 +23,7 @@ class MoviemainPresenter {
     var totalPages: Int?
     var loadingMovie = false
     private var movieViewData = [MovieViewData]()
+    private var movieVideoInfo: MovieVideoInfo?
     weak private var moviemainViewDelegate: MoviemainViewDelegate?
     
     func setDelegate(moviemainViewDelegate: MoviemainViewDelegate){
@@ -52,14 +52,13 @@ class MoviemainPresenter {
             })
             DispatchQueue.main.async {
                 self?.moviemainViewDelegate?.setViewData(self!.movieViewData)
-                self?.moviemainViewDelegate?.showTableView()
                 self?.loadingMovie = false
             }
         }) { (error) in
         self.moviemainViewDelegate?.gernicError()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0 , execute: {
-            self.moviemainViewDelegate?.gernicError()
-            self.loadMovies()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0 , execute: { [weak self] in
+            self?.moviemainViewDelegate?.gernicError()
+            self?.loadMovies()
             })
         }
     

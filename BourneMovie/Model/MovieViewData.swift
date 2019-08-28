@@ -19,6 +19,7 @@ struct MovieViewData {
     let backPoster: String
     let votos: String
     var favorite: Bool
+    var video: MovieVideoInfo?
 }
 
 //MARK - Domain Mapper -

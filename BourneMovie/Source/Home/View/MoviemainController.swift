@@ -17,7 +17,6 @@ class MoviemainController: UIViewController {
     
     private let moviemainPresenter = MoviemainPresenter()
     
-    private var movie: MovieViewData?
     let searchController = UISearchController(searchResultsController: nil)
     private var filterMovies = [MovieViewData]()
     private var movieViewData = [MovieViewData]()
@@ -64,9 +63,11 @@ class MoviemainController: UIViewController {
    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let vc = segue.destination as! DetailViewController
-        vc.movie = self.movie
-        
+        guard let viewController = segue.destination as? DetailViewController,
+                  segue.identifier == "detailSegue",
+                  let index = sender as? Int
+                  else { return }
+        viewController.movie = self.movieViewData[index]
     }
     
 }
@@ -94,11 +95,11 @@ extension MoviemainController: UITableViewDataSource, UITableViewDelegate {
         }else {
             movie = movieViewData[indexPath.row]
         }
-        
         let cell = self.tbMovie.dequeueReusableCell(withIdentifier: "cellMovie") as! MoviemainTableViewCell
         cell.formatCell(movie)
-        cell.delegate = self
-        cell.result = movie
+        cell.showMovie = { [weak self] in
+            self?.performSegue(withIdentifier: "detailSegue", sender: indexPath.row)
+        }
         return cell
     }
     
@@ -108,32 +109,19 @@ extension MoviemainController: UITableViewDataSource, UITableViewDelegate {
                 moviemainPresenter.currentPage = page + 1
                 moviemainPresenter.loadMovies()
             }
-            
         }
     }
 
 }
 
-extension MoviemainController: UISearchBarDelegate {
 
-}
-
-extension MoviemainController: UISearchResultsUpdating {
+extension MoviemainController: UISearchResultsUpdating, UISearchBarDelegate {
     func updateSearchResults(for searchController: UISearchController) {
         filterContentForSearchText(searchText: searchController.searchBar.text!)
     }
 }
 
 extension MoviemainController: MoviemainViewDelegate {
-    func setMovie(_ movie: MovieViewData) {
-        self.movie = movie
-    }
-    
-    func showTableView() {
-        self.tbMovie.isHidden = false
-        self.tbMovie.reloadData()
-    }
-    
     func stopLoading() {
         //
     }
@@ -155,11 +143,11 @@ extension MoviemainController: MoviemainViewDelegate {
     
     func setViewData(_ viewData: [MovieViewData]) {
         self.movieViewData = viewData
+        self.tbMovie.isHidden = false
+        self.tbMovie.reloadData()
     }
     
     func showLoading() {
         //
     }
-    
-
 }

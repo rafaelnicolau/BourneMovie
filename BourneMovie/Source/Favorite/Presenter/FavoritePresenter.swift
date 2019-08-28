@@ -35,6 +35,9 @@ class FavoritePresenter {
         self.favoriteDelegate?.tableViewReload()
     }
     
+    func removeFavorite(_ movie: MovieViewData){
+        Service.shared.favorite.listFavorite = Service.shared.favorite.listFavorite.filter(){($0.id != movie.id )}
+    }
     
     
 }

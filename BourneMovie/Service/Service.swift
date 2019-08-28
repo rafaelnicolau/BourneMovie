@@ -17,6 +17,7 @@ class Service {
     private init () {}
     
     var serviceRequest: MovieInfo?
+    var requestVideo: MovieVideoInfo?
     var requestGenres: MovieGenres?
     var result = [MovieResult]()
     var favorite = Favorite()
